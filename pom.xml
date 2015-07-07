@@ -7,7 +7,7 @@
   <version>1.0.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <name>Spatial Functions for Jena ARQ</name>
+  <name>Extra spatial functions for Jena ARQ</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -61,4 +61,5 @@
   		</plugin>
   	</plugins>
   </build>
+  <description>Includes a property function for Jena ARQ for determining if a geo point (WGS84) is inside a polygon.</description>
 </project>
