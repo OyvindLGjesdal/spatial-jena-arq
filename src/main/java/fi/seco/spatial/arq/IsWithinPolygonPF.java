@@ -32,7 +32,7 @@ import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
  * Property function for determining if a geo point (WGS84) is inside a polygon. 
  *
  * Implemented as an extension of the Jena Spatial module,
- *  see https://jena.apache.org/documentation/query/spatial-query.html
+ *  see http://jena.apache.org/documentation/query/spatial-query.html
  * Uses JTS Topology Suite,
  *  see http://tsusiatsoftware.net/jts/main.html
  * 
@@ -40,18 +40,25 @@ import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
  * (using the properties from the namespace http://www.w3.org/2003/01/geo/wgs84_pos#) or unbound,
  * and the object to be a string or list representing a polygon.
  *
- * Object format: 'polygon' OR 
- *                ('polygon' ['delimiter_point'] ['delimiter_latlong'] [long_lat] [ignore_polygon_errors])
+ * Usage:
+ * 
+ *  ?place seco-spatial:withinPolygon 'polygon'   
+ *  OR 
+ *  ?place seco-spatial:withinPolygon ('polygon' ['delimiter_point'] ['delimiter_latlong'] [long_lat] [ignore_polygon_errors])
+ *
+ *   polygon: string containing the individual points of a polygon  
+ *   delimiter_point: delimiter used between the individual points of a polygon, default: ', '
+ *   delimiter_latlong: delimiter used between latitude and longitude coordinates of a point in polygon, default: ' '
+ *   long_lat: is longitude before latitude in a point in polygon (case SAPO), default: false
+ *   ignore_polygon_errors: are invalid polygons ignored silently (otherwise an exception is thrown), default: false
  *  
- *  delimiter_point: delimiter used between the individual points of a polygon, default: ', '
- *  delimiter_latlong: delimiter used between latitude and longitude coordinates of a point in polygon, default: ' '
- *  long_lat: is longitude before latitude in a point in polygon (case SAPO), default: false
- *  ignore_polygon_errors: are invalid polygons ignored silently (otherwise an exception is thrown), default: false
+ * Examples:
+ * 
+ *  Simple:  ?place seco-spatial:withinPolygon '59.9224888308 24.9422920760, 59.9424526638 25.1585533582, 60.0270350324 25.1687391225'
  *  
- *  Examples:
- *   Simple:  '59.9224888308 24.9422920760, 59.9424526638 25.1585533582, 60.0270350324 25.1687391225'
- *   WKT:     'POLYGON ((59.9224888308 24.9422920760, 59.9424526638 25.1585533582, 60.0270350324 25.1687391225))'
- *   SAPO:    ('24.9422920760,59.9224888308 25.1585533582,59.9424526638 25.1687391225,60.0270350324' ' ' ',' true true)
+ *  WKT:     ?place seco-spatial:withinPolygon 'POLYGON ((59.9224888308 24.9422920760, 59.9424526638 25.1585533582, 60.0270350324 25.1687391225))'^^<http://www.opengis.net/ont/geosparql#wktLiteral>
+ *  
+ *  SAPO:    ?place seco-spatial:withinPolygon ('24.9422920760,59.9224888308 25.1585533582,59.9424526638 25.1687391225,60.0270350324' ' ' ',' true true)
  *   
  * See class examples.SpatialFunctionsExample for complete SPARQL query examples.
  */
