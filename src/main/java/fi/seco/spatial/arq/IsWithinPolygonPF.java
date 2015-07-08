@@ -21,6 +21,7 @@ import com.hp.hpl.jena.sparql.engine.iterator.QueryIterPlainWrapper;
 import com.hp.hpl.jena.sparql.pfunction.PropFuncArg;
 import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateList;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
@@ -38,19 +39,19 @@ import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
  * 
  * This property function requires the subject to be a resource with spatial-indexed geo point  
  * (using the properties from the namespace http://www.w3.org/2003/01/geo/wgs84_pos#) or unbound,
- * and the object to be a string or list representing a polygon.
+ * and the object to be a string or list representing a polygon. If the polygon is not closed,
+ * i.e. it's last point is not the same as the first point, it's closed automatically. 
  *
  * Usage:
  * 
  *  ?place seco-spatial:withinPolygon 'polygon'   
  *  OR 
- *  ?place seco-spatial:withinPolygon ('polygon' ['delimiter_point'] ['delimiter_latlong'] [long_lat] [ignore_polygon_errors])
+ *  ?place seco-spatial:withinPolygon ('polygon' ['delimiter_point'] ['delimiter_latlong'] [long_lat])
  *
  *   polygon: string containing the individual points of a polygon  
  *   delimiter_point: delimiter used between the individual points of a polygon, default: ', '
  *   delimiter_latlong: delimiter used between latitude and longitude coordinates of a point in polygon, default: ' '
  *   long_lat: is longitude before latitude in a point in polygon (case SAPO), default: false
- *   ignore_polygon_errors: are invalid polygons ignored silently (otherwise an exception is thrown), default: false
  *  
  * Examples:
  * 
@@ -58,7 +59,7 @@ import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
  *  
  *  WKT:     ?place seco-spatial:withinPolygon 'POLYGON ((59.9224888308 24.9422920760, 59.9424526638 25.1585533582, 60.0270350324 25.1687391225))'^^<http://www.opengis.net/ont/geosparql#wktLiteral>
  *  
- *  SAPO:    ?place seco-spatial:withinPolygon ('24.9422920760,59.9224888308 25.1585533582,59.9424526638 25.1687391225,60.0270350324' ' ' ',' true true)
+ *  SAPO:    ?place seco-spatial:withinPolygon ('24.9422920760,59.9224888308 25.1585533582,59.9424526638 25.1687391225,60.0270350324' ' ' ',' true)
  *   
  * See class examples.SpatialFunctionsExample for complete SPARQL query examples.
  */
@@ -86,11 +87,11 @@ public class IsWithinPolygonPF extends SpatialOperationWithBoxPFBase {
 	    String delimiterPoint = ", ";
 	    String delimiterLatLong = " ";
 	    boolean longLat = false;
-	    boolean ignorePolygonErrors = false;
 	    
 	    if (argObject.isList()) {
 	    	List<Node> args = argObject.getArgList();
 	    	if (!args.isEmpty()) {
+	    		argObject = new PropFuncArg(args.get(0));
 		    	if (args.size() > 1) {
 		    		delimiterPoint = args.get(1).getLiteralLexicalForm();
 		    		if (args.size() > 2) {
@@ -100,16 +101,9 @@ public class IsWithinPolygonPF extends SpatialOperationWithBoxPFBase {
 		    				if (longLatParam.getLiteralDatatype().equals(XSDDatatype.XSDboolean) &&
 		    					longLatParam.getLiteralLexicalForm() == "true")
 			    				longLat = true;
-		    				if (args.size() > 4) {
-		    					Node ignorePolygonErrorsParam = args.get(4);
-			    				if (ignorePolygonErrorsParam.getLiteralDatatype().equals(XSDDatatype.XSDboolean) &&
-			    						ignorePolygonErrorsParam.getLiteralLexicalForm() == "true")
-			    					ignorePolygonErrors = true;
-		    				}
 		    			}
 			    	}
 			    }
-			    	argObject = new PropFuncArg(args.get(0));
 		    }
 	    }
 	    
@@ -136,25 +130,19 @@ public class IsWithinPolygonPF extends SpatialOperationWithBoxPFBase {
 			}
 
 			GeometryFactory gf = new GeometryFactory();
-			try {
-			    this.polygon = gf.createPolygon(new LinearRing(new CoordinateArraySequence(points.toArray(new Coordinate[points.size()])), gf), null);
-				Envelope envelope = this.polygon.getEnvelopeInternal();
-				
-				List<Node> bBox = new ArrayList<Node>();
-				bBox.add(NodeFactory.createLiteral(Double.toString(envelope.getMinX())));
-				bBox.add(NodeFactory.createLiteral(Double.toString(envelope.getMinY())));
-				bBox.add(NodeFactory.createLiteral(Double.toString(envelope.getMaxX())));
-				bBox.add(NodeFactory.createLiteral(Double.toString(envelope.getMaxY())));
-				this.argObjectBBox = new PropFuncArg(bBox);
+			CoordinateList list = new CoordinateList(points.toArray(new Coordinate[points.size()]));
+			list.closeRing();
+			this.polygon = gf.createPolygon(new LinearRing(new CoordinateArraySequence(list.toCoordinateArray()), gf), null);
+			Envelope envelope = this.polygon.getEnvelopeInternal();
+			
+			List<Node> bBox = new ArrayList<Node>();
+			bBox.add(NodeFactory.createLiteral(Double.toString(envelope.getMinX())));
+			bBox.add(NodeFactory.createLiteral(Double.toString(envelope.getMinY())));
+			bBox.add(NodeFactory.createLiteral(Double.toString(envelope.getMaxX())));
+			bBox.add(NodeFactory.createLiteral(Double.toString(envelope.getMaxY())));
+			this.argObjectBBox = new PropFuncArg(bBox);
 
-				super.build(argSubject, predicate, this.argObjectBBox, execCxt);
-			}
-			catch (IllegalArgumentException e) {
-				if (ignorePolygonErrors)
-					e.printStackTrace();
-				else
-					throw e;
-			}
+			super.build(argSubject, predicate, this.argObjectBBox, execCxt);
 		}
 	}
 

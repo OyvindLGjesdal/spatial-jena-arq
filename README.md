@@ -13,20 +13,20 @@ Property function seco-spatial:withinPolygon
 -----
   
 This property function requires the subject to be a resource with spatial-indexed geo point  
-(using the properties from the namespace *http://www.w3.org/2003/01/geo/wgs84_pos#*) or unbound,
-and the object to be a string or list representing a polygon.
+(using the properties from the namespace *http://www.w3.org/2003/01/geo/wgs84_pos#*) or unbound,  
+and the object to be a string or list representing a polygon. If the polygon is not closed,  
+i.e. it's last point is not the same as the first point, it's closed automatically.
 
 ### Usage:
 
 ?place **seco-spatial:withinPolygon** `'polygon'`  
 OR  
-?place **seco-spatial:withinPolygon** `('polygon' ['delimiter_point'] ['delimiter_latlong'] [long_lat] [ignore_polygon_errors])`
+?place **seco-spatial:withinPolygon** `('polygon' ['delimiter_point'] ['delimiter_latlong'] [long_lat])`
 
  `polygon`: string containing the individual points of a polygon  
  `delimiter_point`: delimiter used between the individual points of a polygon, default: ', '  
  `delimiter_latlong`: delimiter used between latitude and longitude coordinates of a point in polygon, default: ' '  
  `long_lat`: is longitude before latitude in a point in polygon (case SAPO), default: false  
- `ignore_polygon_errors`: are invalid polygons ignored silently (otherwise an exception is thrown), default: false
   
 ### Examples:
  
@@ -34,7 +34,7 @@ Simple:  ?place **seco-spatial:withinPolygon** `'59.9224888308 24.9422920760, 59
 
 WKT:     ?place **seco-spatial:withinPolygon** `'POLYGON ((59.9224888308 24.9422920760, 59.9424526638 25.1585533582, 60.0270350324 25.1687391225))'^^<http://www.opengis.net/ont/geosparql#wktLiteral>`
 
-SAPO:    ?place **seco-spatial:withinPolygon** `('24.9422920760,59.9224888308 25.1585533582,59.9424526638 25.1687391225,60.0270350324' ' ' ',' true true)`
+SAPO:    ?place **seco-spatial:withinPolygon** `('24.9422920760,59.9224888308 25.1585533582,59.9424526638 25.1687391225,60.0270350324' ' ' ',' true)`
    
 See Java class `examples.SpatialFunctionsExample` for complete SPARQL query examples.
  
