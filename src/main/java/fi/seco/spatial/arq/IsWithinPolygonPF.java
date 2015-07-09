@@ -113,12 +113,11 @@ public class IsWithinPolygonPF extends SpatialOperationWithBoxPFBase {
 			throw new QueryBuildException("Object is/contains a variable: "
 					+ argObject);
 	    
-			Node polygonNode = argObject.getArg();
-			if (polygonNode.isLiteral()) {
-				String polygonStr = polygonNode.getLiteralLexicalForm();
-				if (polygonStr.indexOf("POLYGON ((") == 0) {
+		Node polygonNode = argObject.getArg();
+		if (polygonNode.isLiteral()) {
+			String polygonStr = polygonNode.getLiteralLexicalForm();
+			if (polygonStr.indexOf("POLYGON ((") == 0)
 				polygonStr = polygonStr.substring("POLYGON ((".length(), polygonStr.length()-2);
-			}
 			for (String pointStr : polygonStr.split(delimiterPoint)) {
 				String[] coords = pointStr.split(delimiterLatLong);
 				if (coords.length == 2) {

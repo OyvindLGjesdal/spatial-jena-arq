@@ -67,7 +67,7 @@ public class SpatialFunctionsExample {
         //String queryString = "SELECT * WHERE { ?s <http://jena.apache.org/spatial#nearby> (60 25 100) ; <http://www.w3.org/2000/01/rdf-schema#label> ?label . }";
         //String queryString = "SELECT * WHERE { ?s <http://jena.apache.org/spatial#withinBox> (59 24 61 26) ; <http://www.w3.org/2000/01/rdf-schema#label> ?label . }";
     	//String queryString = "SELECT * WHERE { ?s <http://jena.apache.org/spatial#withinBox> (0 0 0 0) ; <http://www.w3.org/2000/01/rdf-schema#label> ?label . }";
-
+        
         String queryString = "SELECT * WHERE { ?s <http://www.seco.tkk.fi/spatial#withinPolygon> ('"+polygonHelsinki+"' ' ' ',') ; <http://www.w3.org/2000/01/rdf-schema#label> ?label . }";
         //String queryString = "SELECT * WHERE { ?s <http://www.seco.tkk.fi/spatial#withinPolygon> '"+polygonHelsinkiWKT+"'^^<"+wktLiteralDatatype+"> ; <http://www.w3.org/2000/01/rdf-schema#label> ?label . }";
         //String queryString = "SELECT * WHERE { <http://ldf.fi/pnr/P_10342733> <http://www.seco.tkk.fi/spatial#withinPolygon> ('"+polygonHelsinki+"' ' ' ',') ; <http://www.w3.org/2000/01/rdf-schema#label> ?label . }";
