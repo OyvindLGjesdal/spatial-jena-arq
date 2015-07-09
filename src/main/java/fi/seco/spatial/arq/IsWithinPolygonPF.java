@@ -46,20 +46,22 @@ import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
  * 
  *  ?place seco-spatial:withinPolygon 'polygon'   
  *  OR 
- *  ?place seco-spatial:withinPolygon ('polygon' ['delimiter_point'] ['delimiter_latlong'] [long_lat])
+ *  ?place seco-spatial:withinPolygon ('polygon' ['delimiter_point'] ['delimiter_longlat'] [lat_long])
  *
- *   polygon: string containing the individual points of a polygon  
+ *   polygon: string containing the individual points of a polygon in format 'long_1 lat_1, long_2 lat_2, ...' (default)
  *   delimiter_point: delimiter used between the individual points of a polygon, default: ', '
- *   delimiter_latlong: delimiter used between latitude and longitude coordinates of a point in polygon, default: ' '
- *   long_lat: is longitude before latitude in a point in polygon (case SAPO), default: false
+ *   delimiter_longlat: delimiter used between longitude and latitude coordinates of a point in polygon, default: ' '
+ *   lat_long: is latitude before longitude in a point in polygon, default: false
  *  
  * Examples:
  * 
- *  Simple:  ?place seco-spatial:withinPolygon '59.9224888308 24.9422920760, 59.9424526638 25.1585533582, 60.0270350324 25.1687391225'
+ *  Simple:           ?place seco-spatial:withinPolygon '24.9422920760 59.9224888308, 25.1585533582 59.9424526638, 25.1687391225 60.0270350324, 24.9422920760 59.9224888308'
  *  
- *  WKT:     ?place seco-spatial:withinPolygon 'POLYGON ((59.9224888308 24.9422920760, 59.9424526638 25.1585533582, 60.0270350324 25.1687391225))'^^<http://www.opengis.net/ont/geosparql#wktLiteral>
+ *  WKT:              ?place seco-spatial:withinPolygon 'POLYGON ((24.9422920760 59.9224888308, 25.1585533582 59.9424526638, 25.1687391225 60.0270350324, 24.9422920760 59.9224888308))'^^<http://www.opengis.net/ont/geosparql#wktLiteral>
  *  
- *  SAPO:    ?place seco-spatial:withinPolygon ('24.9422920760,59.9224888308 25.1585533582,59.9424526638 25.1687391225,60.0270350324' ' ' ',' true)
+ *  SAPO:             ?place seco-spatial:withinPolygon ('24.9422920760,59.9224888308 25.1585533582,59.9424526638 25.1687391225,60.0270350324 24.9422920760,59.9224888308' ' ' ',')
+ *   
+ *  Lat before Long:  ?place seco-spatial:withinPolygon ('59.9224888308 24.9422920760, 59.9424526638 25.1585533582, 60.0270350324 25.1687391225, 59.9224888308 24.9422920760' ', ' ' ' true)
  *   
  * See class examples.SpatialFunctionsExample for complete SPARQL query examples.
  */
@@ -86,7 +88,7 @@ public class IsWithinPolygonPF extends SpatialOperationWithBoxPFBase {
 	    
 	    String delimiterPoint = ", ";
 	    String delimiterLatLong = " ";
-	    boolean longLat = false;
+	    boolean latLong = false;
 	    
 	    if (argObject.isList()) {
 	    	List<Node> args = argObject.getArgList();
@@ -97,10 +99,10 @@ public class IsWithinPolygonPF extends SpatialOperationWithBoxPFBase {
 		    		if (args.size() > 2) {
 		    			delimiterLatLong = args.get(2).getLiteralLexicalForm();
 		    			if (args.size() > 3) {
-		    				Node longLatParam = args.get(3);
-		    				if (longLatParam.getLiteralDatatype().equals(XSDDatatype.XSDboolean) &&
-		    					longLatParam.getLiteralLexicalForm() == "true")
-			    				longLat = true;
+		    				Node latLongParam = args.get(3);
+		    				if (latLongParam.getLiteralDatatype().equals(XSDDatatype.XSDboolean) &&
+		    					latLongParam.getLiteralLexicalForm() == "true")
+			    				latLong = true;
 		    			}
 			    	}
 			    }
@@ -122,10 +124,10 @@ public class IsWithinPolygonPF extends SpatialOperationWithBoxPFBase {
 				if (coords.length == 2) {
 					float first = Float.parseFloat(coords[0]);
 					float second = Float.parseFloat(coords[1]);
-					if (longLat)
-						points.add(new Coordinate(second, first));
-					else
+					if (latLong)
 						points.add(new Coordinate(first, second));
+					else
+						points.add(new Coordinate(second, first));
 				}
 			}
 

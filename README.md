@@ -21,20 +21,22 @@ i.e. it's last point is not the same as the first point, it's closed automatical
 
 ?place **seco-spatial:withinPolygon** `'polygon'`  
 OR  
-?place **seco-spatial:withinPolygon** `('polygon' ['delimiter_point'] ['delimiter_latlong'] [long_lat])`
+?place **seco-spatial:withinPolygon** `('polygon' ['delimiter_point'] ['delimiter_longlat'] [lat_long])`
 
- `polygon`: string containing the individual points of a polygon  
- `delimiter_point`: delimiter used between the individual points of a polygon, default: ', '  
- `delimiter_latlong`: delimiter used between latitude and longitude coordinates of a point in polygon, default: ' '  
- `long_lat`: is longitude before latitude in a point in polygon (case SAPO), default: false  
+ `polygon`: string containing the individual points of a polygon in format `'long_1 lat_1, long_2 lat_2, ...'` (default)  
+ `delimiter_point`: delimiter used between the individual points of a polygon, default: `', '`  
+ `delimiter_longlat`: delimiter used between longitude and latitude coordinates of a point in polygon, default: `' '`  
+ `lat_long`: is latitude before longitude in a point in polygon, default: `false`  
   
 ### Examples:
  
-Simple:  ?place **seco-spatial:withinPolygon** `'59.9224888308 24.9422920760, 59.9424526638 25.1585533582, 60.0270350324 25.1687391225'`
+Simple:           ?place **seco-spatial:withinPolygon** `'24.9422920760 59.9224888308, 25.1585533582 59.9424526638, 25.1687391225 60.0270350324, 24.9422920760 59.9224888308'`
 
-WKT:     ?place **seco-spatial:withinPolygon** `'POLYGON ((59.9224888308 24.9422920760, 59.9424526638 25.1585533582, 60.0270350324 25.1687391225))'^^<http://www.opengis.net/ont/geosparql#wktLiteral>`
+WKT:              ?place **seco-spatial:withinPolygon** `'POLYGON ((24.9422920760 59.9224888308, 25.1585533582 59.9424526638, 25.1687391225 60.0270350324, 24.9422920760 59.9224888308))'^^<http://www.opengis.net/ont/geosparql#wktLiteral>`
 
-SAPO:    ?place **seco-spatial:withinPolygon** `('24.9422920760,59.9224888308 25.1585533582,59.9424526638 25.1687391225,60.0270350324' ' ' ',' true)`
+SAPO:             ?place **seco-spatial:withinPolygon** `('24.9422920760,59.9224888308 25.1585533582,59.9424526638 25.1687391225,60.0270350324 24.9422920760,59.9224888308' ' ' ',')`
+   
+Lat before Long:  ?place **seco-spatial:withinPolygon** `('59.9224888308 24.9422920760, 59.9424526638 25.1585533582, 60.0270350324 25.1687391225, 59.9224888308 24.9422920760' ', ' ' ' true)`
    
 See Java class `examples.SpatialFunctionsExample` for complete SPARQL query examples.
  
