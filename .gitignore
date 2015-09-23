@@ -1,4 +1,2 @@
 /target/
-/src/main/java/fi/seco/spatial/arq/PolygonSpatialMatch.java
-/src/main/java/fi/seco/spatial/arq/IsWithinPolygonPF2.java
 /src/main/java/examples/ValidateSAPOPolygons.java
