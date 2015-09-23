@@ -6,6 +6,11 @@ import org.apache.lucene.spatial.query.SpatialOperation;
 
 import com.spatial4j.core.shape.Shape;
 
+/**
+ * UNFINISHED VERSION, trying to use the Lucene spatial index for checking if a point is inside polygon (instead of bbox as in master branch)
+ *
+ */
+
 public class PolygonSpatialMatch extends SpatialMatch {
 
 	private final Shape shape;

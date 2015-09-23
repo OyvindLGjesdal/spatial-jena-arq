@@ -27,7 +27,7 @@ import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 
 /**
- * UNFINISHED VERSION, trying to use the Lucene spatial index for checking if a point is inside polygon (instead of bbox as in IsWithinPolygonPF.java) 
+ * UNFINISHED VERSION, trying to use the Lucene spatial index for checking if a point is inside polygon (instead of bbox as in master branch)
  * 
  * Property function that requires the subject to be a resource with spatial-indexed geo point (can be unbound) and the object to
  * be a string or list representing a polygon.
