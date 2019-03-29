@@ -1,2 +1,4 @@
 /target/
-/src/main/java/examples/ValidateSAPOPolygons.java
+.classpath
+.project
+.settings
